@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- CALCULATOR_INFO
+title: Ohm's Law Calculator
+description: Calculate Voltage, Current, Resistance and Power instantly
+category: Electrical
+icon: ⚡
+featured: true
+-->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ohm's Law Calculator | Engineer's Workspace</title>
+<meta name="description" content="Calculate Voltage, Current, Resistance and Power instantly with a professional Ohm's Law calculator.">
+<style>
+  :root{
+    --ew-bg:#f4f6f9;
+    --ew-bg-grid:#e3e9f2;
+    --ew-surface:#ffffff;
+    --ew-surface-alt:#f8fafc;
+    --ew-border:#d7dee8;
+    --ew-text:#1a2433;
+    --ew-text-muted:#5c6b7f;
+    --ew-brand:#1d5fd6;
+    --ew-brand-dark:#123f99;
+    --ew-accent:#0ea5a0;
+    --ew-danger:#d6304a;
+    --ew-danger-bg:#fdeef0;
+    --ew-shadow: 0 4px 18px rgba(20,30,50,0.08);
+    --ew-radius:14px;
+    --ew-nav-h:64px;
+  }
+  [data-theme="dark"]{
+    --ew-bg:#0d1420;
+    --ew-bg-grid:#111c2c;
+    --ew-surface:#141f30;
+    --ew-surface-alt:#0f1926;
+    --ew-border:#243349;
+    --ew-text:#e7edf6;
+    --ew-text-muted:#93a3ba;
+    --ew-brand:#5b9bff;
+    --ew-brand-dark:#3d7de0;
+    --ew-accent:#2dd4bf;
+    --ew-danger:#ff6b82;
+    --ew-danger-bg:#2a1420;
+    --ew-shadow: 0 4px 22px rgba(0,0,0,0.45);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family: 'Segoe UI', Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+    color:var(--ew-text);
+    background-color:var(--ew-bg);
+    background-image:
+      linear-gradient(var(--ew-bg-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--ew-bg-grid) 1px, transparent 1px);
+    background-size: 32px 32px;
+    min-height:100vh;
+    transition: background-color .25s ease, color .25s ease;
+  }
+
+  a{color:inherit;}
+
+  /* ---------- NAVBAR ---------- */
+  .ew-nav{
+    position:sticky; top:0; z-index:50;
+    height:var(--ew-nav-h);
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 24px;
+    background:var(--ew-surface);
+    border-bottom:1px solid var(--ew-border);
+    box-shadow:var(--ew-shadow);
+  }
+  .ew-nav-left{display:flex; align-items:center; gap:10px;}
+  .ew-logo{
+    font-weight:700; font-size:1.15rem; letter-spacing:.2px;
+    display:flex; align-items:center; gap:8px; text-decoration:none;
+    color:var(--ew-text);
+  }
+  .ew-logo-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:34px; height:34px; border-radius:9px;
+    background:linear-gradient(135deg, var(--ew-brand), var(--ew-accent));
+    color:#fff; font-size:1.1rem;
+  }
+  .ew-nav-crumb{
+    color:var(--ew-text-muted); font-size:.85rem;
+  }
+  .ew-nav-right{display:flex; align-items:center; gap:14px;}
+  .ew-back-link{
+    font-size:.85rem; text-decoration:none; color:var(--ew-brand);
+    font-weight:600;
+  }
+  .ew-theme-toggle{
+    border:1px solid var(--ew-border);
+    background:var(--ew-surface-alt);
+    color:var(--ew-text);
+    width:40px; height:40px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; font-size:1.05rem;
+    transition: background .2s ease, transform .15s ease;
+  }
+  .ew-theme-toggle:hover{transform:translateY(-1px);}
+  .ew-theme-toggle:active{transform:translateY(0);}
+
+  /* ---------- LAYOUT ---------- */
+  .ew-page{
+    max-width:1180px;
+    margin:0 auto;
+    padding:32px 20px 60px;
+  }
+  .ew-header{
+    text-align:center;
+    margin-bottom:28px;
+  }
+  .ew-header h1{
+    font-size:clamp(1.6rem, 2.6vw, 2.3rem);
+    margin:0 0 8px;
+    display:flex; align-items:center; justify-content:center; gap:10px;
+  }
+  .ew-header p{
+    color:var(--ew-text-muted);
+    margin:0; font-size:.98rem;
+  }
+
+  .ew-grid{
+    display:grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap:24px;
+    align-items:start;
+  }
+  @media (max-width:900px){
+    .ew-grid{grid-template-columns:1fr;}
+  }
+
+  .ew-card{
+    background:var(--ew-surface);
+    border:1px solid var(--ew-border);
+    border-radius:var(--ew-radius);
+    box-shadow:var(--ew-shadow);
+    padding:24px;
+  }
+  .ew-card h2{
+    margin:0 0 6px;
+    font-size:1.15rem;
+    display:flex; align-items:center; gap:8px;
+  }
+  .ew-card .ew-subtitle{
+    color:var(--ew-text-muted);
+    font-size:.85rem;
+    margin:0 0 18px;
+  }
+
+  /* ---------- FORM ---------- */
+  .ew-field{
+    margin-bottom:16px;
+  }
+  .ew-field label{
+    display:block;
+    font-size:.85rem;
+    font-weight:600;
+    margin-bottom:6px;
+    color:var(--ew-text);
+  }
+  .ew-input-row{
+    display:flex;
+    gap:8px;
+  }
+  .ew-input-row input[type="text"]{
+    flex:1;
+    min-width:0;
+    padding:11px 12px;
+    font-size:1rem;
+    border-radius:10px;
+    border:1px solid var(--ew-border);
+    background:var(--ew-surface-alt);
+    color:var(--ew-text);
+    transition: border-color .15s ease, box-shadow .15s ease;
+    font-variant-numeric: tabular-nums;
+  }
+  .ew-input-row input[type="text"]:focus{
+    outline:none;
+    border-color:var(--ew-brand);
+    box-shadow:0 0 0 3px rgba(29,95,214,0.18);
+  }
+  .ew-input-row select{
+    padding:11px 10px;
+    font-size:.92rem;
+    border-radius:10px;
+    border:1px solid var(--ew-border);
+    background:var(--ew-surface-alt);
+    color:var(--ew-text);
+    cursor:pointer;
+  }
+  .ew-field.ew-invalid input[type="text"]{
+    border-color:var(--ew-danger);
+    background:var(--ew-danger-bg);
+  }
+  .ew-field-error{
+    display:none;
+    color:var(--ew-danger);
+    font-size:.78rem;
+    margin-top:5px;
+    font-weight:600;
+  }
+  .ew-field.ew-invalid .ew-field-error{display:block;}
+
+  .ew-hint{
+    font-size:.78rem;
+    color:var(--ew-text-muted);
+    margin-top:10px;
+  }
+
+  /* ---------- BUTTONS ---------- */
+  .ew-actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:20px;
+  }
+  .ew-btn{
+    flex:1;
+    min-width:120px;
+    padding:12px 16px;
+    font-size:.92rem;
+    font-weight:700;
+    border-radius:10px;
+    border:1px solid transparent;
+    cursor:pointer;
+    transition: transform .12s ease, background .15s ease, box-shadow .15s ease;
+    display:flex; align-items:center; justify-content:center; gap:6px;
+  }
+  .ew-btn:active{transform:scale(0.97);}
+  .ew-btn-primary{
+    background:linear-gradient(135deg, var(--ew-brand), var(--ew-brand-dark));
+    color:#fff;
+  }
+  .ew-btn-primary:hover{box-shadow:0 6px 16px rgba(29,95,214,0.35);}
+  .ew-btn-secondary{
+    background:var(--ew-surface-alt);
+    border-color:var(--ew-border);
+    color:var(--ew-text);
+  }
+  .ew-btn-secondary:hover{background:var(--ew-bg-grid);}
+  .ew-btn-ghost{
+    background:transparent;
+    border-color:var(--ew-border);
+    color:var(--ew-brand);
+  }
+  .ew-btn-ghost:hover{background:rgba(29,95,214,0.08);}
+
+  .ew-status{
+    margin-top:14px;
+    padding:10px 14px;
+    border-radius:10px;
+    font-size:.85rem;
+    font-weight:600;
+    display:none;
+  }
+  .ew-status.ew-show{display:block;}
+  .ew-status.ew-status-error{
+    background:var(--ew-danger-bg);
+    color:var(--ew-danger);
+    border:1px solid var(--ew-danger);
+  }
+  .ew-status.ew-status-success{
+    background:rgba(14,165,160,0.12);
+    color:var(--ew-accent);
+    border:1px solid var(--ew-accent);
+  }
+
+  /* ---------- RESULTS ---------- */
+  .ew-results-grid{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:14px;
+    margin-top:6px;
+  }
+  @media (max-width:500px){
+    .ew-results-grid{grid-template-columns:1fr;}
+  }
+  .ew-result-card{
+    background:var(--ew-surface-alt);
+    border:1px solid var(--ew-border);
+    border-radius:12px;
+    padding:16px;
+    transition: border-color .2s ease, background .2s ease;
+  }
+  .ew-result-card.ew-computed{
+    border-color:var(--ew-accent);
+  }
+  .ew-result-label{
+    font-size:.78rem;
+    color:var(--ew-text-muted);
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.4px;
+    display:flex; align-items:center; gap:6px;
+    margin-bottom:6px;
+  }
+  .ew-result-value{
+    font-size:1.5rem;
+    font-weight:700;
+    font-variant-numeric: tabular-nums;
+    word-break:break-word;
+  }
+  .ew-result-unit{
+    font-size:1rem;
+    font-weight:600;
+    color:var(--ew-text-muted);
+    margin-left:4px;
+  }
+  .ew-badge{
+    font-size:.65rem;
+    font-weight:700;
+    padding:2px 7px;
+    border-radius:20px;
+    background:var(--ew-accent);
+    color:#fff;
+  }
+  .ew-badge-given{
+    background:var(--ew-brand);
+  }
+
+  /* ---------- REFERENCE CARD ---------- */
+  .ew-formula-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-top:4px;
+  }
+  .ew-formula-item{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:var(--ew-surface-alt);
+    border:1px solid var(--ew-border);
+    border-radius:10px;
+    padding:10px 14px;
+    font-size:.95rem;
+  }
+  .ew-formula-item code{
+    font-weight:700;
+    font-size:1rem;
+    color:var(--ew-brand);
+    font-family: 'Cascadia Code', 'Consolas', monospace;
+  }
+  .ew-formula-item span.ew-formula-desc{
+    color:var(--ew-text-muted);
+    font-size:.78rem;
+  }
+
+  .ew-diagram{
+    margin-top:20px;
+    text-align:center;
+  }
+  .ew-diagram svg{
+    max-width:100%;
+    height:auto;
+  }
+
+  /* ---------- FOOTER ---------- */
+  .ew-footer{
+    text-align:center;
+    padding:28px 20px 40px;
+    color:var(--ew-text-muted);
+    font-size:.82rem;
+    border-top:1px solid var(--ew-border);
+    margin-top:20px;
+  }
+  .ew-footer a{
+    color:var(--ew-brand);
+    text-decoration:none;
+    font-weight:600;
+  }
+
+  .ew-visually-hidden{
+    position:absolute;
+    width:1px; height:1px;
+    padding:0; margin:-1px;
+    overflow:hidden;
+    clip:rect(0,0,0,0);
+    white-space:nowrap; border:0;
+  }
+
+  /* focus visibility for keyboard users */
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible{
+    outline:3px solid var(--ew-brand);
+    outline-offset:2px;
+  }
+</style>
+</head>
+<body>
+
+<nav class="ew-nav" aria-label="Primary">
+  <div class="ew-nav-left">
+    <a href="../index.html" class="ew-logo" aria-label="Engineer's Workspace home">
+      <span class="ew-logo-badge">⚙️</span>
+      <span>Engineer's Workspace</span>
+    </a>
+    <span class="ew-nav-crumb">/ Electrical / Ohm's Law</span>
+  </div>
+  <div class="ew-nav-right">
+    <a href="../index.html" class="ew-back-link">&larr; All Calculators</a>
+    <button type="button" class="ew-theme-toggle" id="themeToggle" aria-label="Toggle dark and light theme" title="Toggle theme">
+      <span id="themeIcon" aria-hidden="true">🌙</span>
+    </button>
+  </div>
+</nav>
+
+<main class="ew-page">
+  <header class="ew-header">
+    <h1><span aria-hidden="true">⚡</span> Ohm's Law Calculator</h1>
+    <p>Enter any two values — Voltage, Current, Resistance, or Power — to solve the rest instantly.</p>
+  </header>
+
+  <div class="ew-grid">
+    <!-- ================= INPUT CARD ================= -->
+    <section class="ew-card" aria-labelledby="inputsHeading">
+      <h2 id="inputsHeading"><span aria-hidden="true">🧮</span> Inputs</h2>
+      <p class="ew-subtitle">Provide any two known quantities. Leave the rest blank.</p>
+
+      <form id="ohmsForm" novalidate>
+        <!-- Voltage -->
+        <div class="ew-field" id="field-voltage">
+          <label for="voltageInput">Voltage (V)</label>
+          <div class="ew-input-row">
+            <input type="text" inputmode="decimal" id="voltageInput" name="voltage"
+                   placeholder="e.g. 12" aria-describedby="voltageError">
+            <select id="voltageUnit" aria-label="Voltage unit">
+              <option value="0.001">mV</option>
+              <option value="1" selected>V</option>
+              <option value="1000">kV</option>
+            </select>
+          </div>
+          <div class="ew-field-error" id="voltageError">Enter a valid number.</div>
+        </div>
+
+        <!-- Current -->
+        <div class="ew-field" id="field-current">
+          <label for="currentInput">Current (I)</label>
+          <div class="ew-input-row">
+            <input type="text" inputmode="decimal" id="currentInput" name="current"
+                   placeholder="e.g. 2" aria-describedby="currentError">
+            <select id="currentUnit" aria-label="Current unit">
+              <option value="0.001">mA</option>
+              <option value="1" selected>A</option>
+            </select>
+          </div>
+          <div class="ew-field-error" id="currentError">Enter a valid number.</div>
+        </div>
+
+        <!-- Resistance -->
+        <div class="ew-field" id="field-resistance">
+          <label for="resistanceInput">Resistance (R)</label>
+          <div class="ew-input-row">
+            <input type="text" inputmode="decimal" id="resistanceInput" name="resistance"
+                   placeholder="e.g. 6" aria-describedby="resistanceError">
+            <select id="resistanceUnit" aria-label="Resistance unit">
+              <option value="1" selected>Ω</option>
+              <option value="1000">kΩ</option>
+              <option value="1000000">MΩ</option>
+            </select>
+          </div>
+          <div class="ew-field-error" id="resistanceError">Enter a valid, non-negative number.</div>
+        </div>
+
+        <!-- Power -->
+        <div class="ew-field" id="field-power">
+          <label for="powerInput">Power (P)</label>
+          <div class="ew-input-row">
+            <input type="text" inputmode="decimal" id="powerInput" name="power"
+                   placeholder="e.g. 24" aria-describedby="powerError">
+            <select id="powerUnit" aria-label="Power unit">
+              <option value="1" selected>W</option>
+              <option value="1000">kW</option>
+            </select>
+          </div>
+          <div class="ew-field-error" id="powerError">Enter a valid, non-negative number.</div>
+        </div>
+
+        <div class="ew-actions">
+          <button type="submit" class="ew-btn ew-btn-primary" id="calcBtn">
+            <span aria-hidden="true">✅</span> Calculate
+          </button>
+          <button type="button" class="ew-btn ew-btn-secondary" id="resetBtn">
+            <span aria-hidden="true">↺</span> Reset
+          </button>
+          <button type="button" class="ew-btn ew-btn-ghost" id="copyBtn">
+            <span aria-hidden="true">📋</span> Copy Results
+          </button>
+        </div>
+
+        <div class="ew-status" id="statusBox" role="status" aria-live="polite"></div>
+      </form>
+    </section>
+
+    <!-- ================= RESULTS + REFERENCE ================= -->
+    <div>
+      <section class="ew-card" aria-labelledby="resultsHeading" style="margin-bottom:24px;">
+        <h2 id="resultsHeading"><span aria-hidden="true">📊</span> Results</h2>
+        <p class="ew-subtitle">Given values are marked <span class="ew-badge ew-badge-given">given</span>, solved values are marked <span class="ew-badge">solved</span>.</p>
+
+        <div class="ew-results-grid" id="resultsGrid">
+          <div class="ew-result-card" id="card-voltage">
+            <div class="ew-result-label">Voltage</div>
+            <div class="ew-result-value"><span id="out-voltage">—</span><span class="ew-result-unit">V</span></div>
+          </div>
+          <div class="ew-result-card" id="card-current">
+            <div class="ew-result-label">Current</div>
+            <div class="ew-result-value"><span id="out-current">—</span><span class="ew-result-unit">A</span></div>
+          </div>
+          <div class="ew-result-card" id="card-resistance">
+            <div class="ew-result-label">Resistance</div>
+            <div class="ew-result-value"><span id="out-resistance">—</span><span class="ew-result-unit">Ω</span></div>
+          </div>
+          <div class="ew-result-card" id="card-power">
+            <div class="ew-result-label">Power</div>
+            <div class="ew-result-value"><span id="out-power">—</span><span class="ew-result-unit">W</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="ew-card" aria-labelledby="refHeading">
+        <h2 id="refHeading"><span aria-hidden="true">📐</span> Formula Reference</h2>
+        <p class="ew-subtitle">The core relationships used by this calculator.</p>
+        <div class="ew-formula-list">
+          <div class="ew-formula-item"><code>V = I × R</code><span class="ew-formula-desc">Voltage</span></div>
+          <div class="ew-formula-item"><code>I = V ÷ R</code><span class="ew-formula-desc">Current</span></div>
+          <div class="ew-formula-item"><code>R = V ÷ I</code><span class="ew-formula-desc">Resistance</span></div>
+          <div class="ew-formula-item"><code>P = V × I</code><span class="ew-formula-desc">Power</span></div>
+          <div class="ew-formula-item"><code>P = I² × R</code><span class="ew-formula-desc">Power</span></div>
+          <div class="ew-formula-item"><code>P = V² ÷ R</code><span class="ew-formula-desc">Power</span></div>
+        </div>
+
+        <div class="ew-diagram" aria-hidden="true">
+          <svg width="220" height="140" viewBox="0 0 220 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="110" cy="70" r="60" stroke="var(--ew-border)" stroke-width="2"/>
+            <line x1="50" y1="70" x2="170" y2="70" stroke="var(--ew-border)" stroke-width="2"/>
+            <line x1="110" y1="10" x2="110" y2="130" stroke="var(--ew-border)" stroke-width="2"/>
+            <text x="110" y="42" text-anchor="middle" font-size="18" fill="var(--ew-brand)" font-weight="700">V</text>
+            <text x="80" y="95" text-anchor="middle" font-size="18" fill="var(--ew-accent)" font-weight="700">I</text>
+            <text x="140" y="95" text-anchor="middle" font-size="18" fill="var(--ew-danger)" font-weight="700">R</text>
+          </svg>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<footer class="ew-footer">
+  <p>Engineer's Workspace Calculators &middot; Built for engineers, by engineers &middot; <a href="../index.html">Back to all calculators</a></p>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ============================================================
+     THEME HANDLING (shared "ew-theme" localStorage key)
+  ============================================================ */
+  var THEME_KEY = "ew-theme";
+  var themeToggle = document.getElementById("themeToggle");
+  var themeIcon = document.getElementById("themeIcon");
+
+  function applyTheme(theme){
+    document.documentElement.setAttribute("data-theme", theme);
+    themeIcon.textContent = theme === "dark" ? "☀️" : "🌙";
+  }
+
+  function initTheme(){
+    var saved = null;
+    try { saved = localStorage.getItem(THEME_KEY); } catch(e){ saved = null; }
+    if(!saved){
+      saved = (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+    }
+    applyTheme(saved);
+  }
+
+  themeToggle.addEventListener("click", function(){
+    var current = document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
+    var next = current === "dark" ? "light" : "dark";
+    applyTheme(next);
+    try { localStorage.setItem(THEME_KEY, next); } catch(e){ /* storage unavailable */ }
+  });
+
+  initTheme();
+
+  /* ============================================================
+     CONSTANTS & DOM REFERENCES
+  ============================================================ */
+  var STORAGE_KEY = "ew-ohms-law-values";
+  var EPSILON = 1e-12;
+
+  var fields = {
+    voltage:    { input: document.getElementById("voltageInput"),    unit: document.getElementById("voltageUnit"),    fieldEl: document.getElementById("field-voltage"),    baseUnitLabel: "V" },
+    current:    { input: document.getElementById("currentInput"),    unit: document.getElementById("currentUnit"),    fieldEl: document.getElementById("field-current"),    baseUnitLabel: "A" },
+    resistance: { input: document.getElementById("resistanceInput"), unit: document.getElementById("resistanceUnit"), fieldEl: document.getElementById("field-resistance"), baseUnitLabel: "Ω" },
+    power:      { input: document.getElementById("powerInput"),      unit: document.getElementById("powerUnit"),      fieldEl: document.getElementById("field-power"),      baseUnitLabel: "W" }
+  };
+
+  var outputs = {
+    voltage:    document.getElementById("out-voltage"),
+    current:    document.getElementById("out-current"),
+    resistance: document.getElementById("out-resistance"),
+    power:      document.getElementById("out-power")
+  };
+
+  var cards = {
+    voltage:    document.getElementById("card-voltage"),
+    current:    document.getElementById("card-current"),
+    resistance: document.getElementById("card-resistance"),
+    power:      document.getElementById("card-power")
+  };
+
+  var form = document.getElementById("ohmsForm");
+  var resetBtn = document.getElementById("resetBtn");
+  var copyBtn = document.getElementById("copyBtn");
+  var statusBox = document.getElementById("statusBox");
+
+  var lastResults = null; // populated after a successful calculation, used by Copy Results
+
+  /* ============================================================
+     HELPERS
+  ============================================================ */
+
+  // Parses a raw string into a finite number, or null if invalid/empty.
+  function parseNumericInput(raw){
+    if(raw === null || raw === undefined) return null;
+    var trimmed = String(raw).trim();
+    if(trimmed === "") return null;
+    // Accept plain decimal numbers only (no eval, no expressions).
+    if(!/^-?\d*\.?\d+$/.test(trimmed)) return NaN;
+    var value = Number(trimmed);
+    return Number.isFinite(value) ? value : NaN;
+  }
+
+  // Converts a displayed value (in whichever unit is selected) into the base SI unit.
+  function toBaseUnits(fieldKey){
+    var f = fields[fieldKey];
+    var raw = parseNumericInput(f.input.value);
+    if(raw === null) return { present:false, value:null, raw:null };
+    if(Number.isNaN(raw)) return { present:true, value:NaN, raw:raw };
+    var multiplier = parseFloat(f.unit.value);
+    return { present:true, value: raw * multiplier, raw:raw };
+  }
+
+  // Formats a base-unit number back into a friendly string with sensible precision,
+  // trimming trailing zeros.
+  function formatNumber(value){
+    if(!Number.isFinite(value)) return "—";
+    var abs = Math.abs(value);
+    var decimals;
+    if(abs === 0) decimals = 0;
+    else if(abs < 0.001) decimals = 6;
+    else if(abs < 1) decimals = 4;
+    else if(abs < 100) decimals = 3;
+    else if(abs < 10000) decimals = 2;
+    else decimals = 2;
+
+    var fixed = value.toFixed(decimals);
+    // Trim trailing zeros and a trailing decimal point.
+    if(fixed.indexOf(".") !== -1){
+      fixed = fixed.replace(/0+$/,"").replace(/\.$/,"");
+    }
+    // Avoid "-0"
+    if(fixed === "-0") fixed = "0";
+    return fixed;
+  }
+
+  function clearFieldError(key){
+    fields[key].fieldEl.classList.remove("ew-invalid");
+  }
+
+  function setFieldError(key){
+    fields[key].fieldEl.classList.add("ew-invalid");
+  }
+
+  function clearAllFieldErrors(){
+    Object.keys(fields).forEach(clearFieldError);
+  }
+
+  function showStatus(message, type){
+    statusBox.textContent = message;
+    statusBox.className = "ew-status ew-show " + (type === "error" ? "ew-status-error" : "ew-status-success");
+  }
+
+  function hideStatus(){
+    statusBox.className = "ew-status";
+    statusBox.textContent = "";
+  }
+
+  function resetResultsDisplay(){
+    Object.keys(outputs).forEach(function(key){
+      outputs[key].textContent = "—";
+      var labelBadge = cards[key].querySelector(".ew-badge");
+      if(labelBadge) labelBadge.remove();
+      cards[key].classList.remove("ew-computed");
+    });
+    lastResults = null;
+  }
+
+  function markResult(key, value, wasGiven){
+    outputs[key].textContent = formatNumber(value);
+    var labelEl = cards[key].querySelector(".ew-result-label");
+    var existingBadge = labelEl.querySelector(".ew-badge");
+    if(existingBadge) existingBadge.remove();
+    var badge = document.createElement("span");
+    badge.className = "ew-badge" + (wasGiven ? " ew-badge-given" : "");
+    badge.textContent = wasGiven ? "given" : "solved";
+    labelEl.appendChild(badge);
+    if(!wasGiven) cards[key].classList.add("ew-computed");
+    else cards[key].classList.remove("ew-computed");
+  }
+
+  /* ============================================================
+     CORE CALCULATION LOGIC
+  ============================================================ */
+
+  // Attempts to solve for all four quantities given whichever are known.
+  // Returns { ok:true, values:{...}, given:{...} } or { ok:false, message:"..." }
+  function solveOhmsLaw(known){
+    // known = { voltage: number|null, current: number|null, resistance: number|null, power: number|null }
+    var V = known.voltage, I = known.current, R = known.resistance, P = known.power;
+    var given = {
+      voltage: V !== null,
+      current: I !== null,
+      resistance: R !== null,
+      power: P !== null
+    };
+
+    var providedCount = [V, I, R, P].filter(function(v){ return v !== null; }).length;
+    if(providedCount < 2){
+      return { ok:false, message:"Please enter at least two valid values to solve the circuit." };
+    }
+
+    // Validation: resistance and power cannot be negative in a passive DC circuit context.
+    if(R !== null && R < 0){
+      return { ok:false, message:"Resistance cannot be negative.", badField:"resistance" };
+    }
+    if(P !== null && P < 0){
+      return { ok:false, message:"Power cannot be negative.", badField:"power" };
+    }
+
+    // Resistance of exactly zero is a short circuit — only meaningful if I or P is also zero;
+    // otherwise it implies infinite current, which we reject as an impossible combination.
+    if(R === 0 && (V !== null && V !== 0) ){
+      return { ok:false, message:"A resistance of 0 Ω with nonzero voltage implies infinite current. Check your inputs.", badField:"resistance" };
+    }
+
+    // Try every combination of two knowns, deriving the other two, then verify consistency.
+    try {
+      if(V !== null && I !== null){
+        R = safeDivide(V, I, "Current cannot be 0 A when solving for resistance.");
+        P = V * I;
+      } else if(V !== null && R !== null){
+        I = safeDivide(V, R, "Resistance cannot be 0 Ω when solving for current.");
+        P = V * I;
+      } else if(V !== null && P !== null){
+        // I = P / V, R = V^2 / P
+        I = safeDivide(P, V, "Voltage cannot be 0 V when deriving current from power.");
+        R = safeDivide(V * V, P, "Power cannot be 0 W when deriving resistance from voltage and power.");
+      } else if(I !== null && R !== null){
+        V = I * R;
+        P = I * I * R;
+      } else if(I !== null && P !== null){
+        // V = P / I, R = P / I^2
+        V = safeDivide(P, I, "Current cannot be 0 A when deriving voltage from power.");
+        R = safeDivide(P, I * I, "Current cannot be 0 A when deriving resistance from power.");
+      } else if(R !== null && P !== null){
+        // V = sqrt(P*R), I = sqrt(P/R)
+        if(R === 0){
+          return { ok:false, message:"Resistance cannot be 0 Ω when deriving voltage and current from power.", badField:"resistance" };
+        }
+        V = Math.sqrt(P * R);
+        I = Math.sqrt(P / R);
+      }
+    } catch(err){
+      return { ok:false, message: err.message };
+    }
+
+    // Final sanity check for NaN/Infinity creeping in anywhere.
+    var results = { voltage:V, current:I, resistance:R, power:P };
+    var invalidKey = Object.keys(results).filter(function(k){
+      return !Number.isFinite(results[k]);
+    })[0];
+    if(invalidKey){
+      return { ok:false, message:"The provided values lead to an impossible or undefined result. Please check your inputs." };
+    }
+
+    // If three or more values were originally given, verify they're mutually consistent
+    // (within a small relative tolerance) rather than silently overwriting user input.
+    var tolerance = 0.01; // 1% relative tolerance to allow for rounding in typical inputs
+    var mismatch = null;
+    if(given.voltage && Math.abs(results.voltage - known.voltage) > tolerance * Math.max(1, Math.abs(known.voltage))) mismatch = "voltage";
+    if(!mismatch && given.current && Math.abs(results.current - known.current) > tolerance * Math.max(1, Math.abs(known.current))) mismatch = "current";
+    if(!mismatch && given.resistance && Math.abs(results.resistance - known.resistance) > tolerance * Math.max(1, Math.abs(known.resistance))) mismatch = "resistance";
+    if(!mismatch && given.power && Math.abs(results.power - known.power) > tolerance * Math.max(1, Math.abs(known.power))) mismatch = "power";
+
+    if(mismatch){
+      return { ok:false, message:"The values you entered are inconsistent with Ohm's Law (mismatch found in " + mismatch + "). Please double-check your inputs." };
+    }
+
+    return { ok:true, values:results, given:given };
+  }
+
+  function safeDivide(numerator, denominator, zeroMessage){
+    if(Math.abs(denominator) < EPSILON){
+      var err = new Error(zeroMessage || "Cannot divide by zero.");
+      throw err;
+    }
+    return numerator / denominator;
+  }
+
+  /* ============================================================
+     FORM SUBMISSION / CALCULATE
+  ============================================================ */
+
+  function collectKnownValues(){
+    var known = {};
+    var hasParseError = false;
+    var errorField = null;
+
+    Object.keys(fields).forEach(function(key){
+      var result = toBaseUnits(key);
+      if(result.present && Number.isNaN(result.value)){
+        hasParseError = true;
+        errorField = errorField || key;
+        setFieldError(key);
+        known[key] = null;
+      } else {
+        clearFieldError(key);
+        known[key] = result.present ? result.value : null;
+      }
+    });
+
+    return { known:known, hasParseError:hasParseError, errorField:errorField };
+  }
+
+  function runCalculation(){
+    clearAllFieldErrors();
+    hideStatus();
+
+    var collected = collectKnownValues();
+    if(collected.hasParseError){
+      showStatus("One or more fields contain an invalid number. Please correct the highlighted field.", "error");
+      resetResultsDisplay();
+      return;
+    }
+
+    var known = collected.known;
+
+    // Negative-value quick checks with field highlighting before deeper solving.
+    if(known.resistance !== null && known.resistance < 0){
+      setFieldError("resistance");
+      showStatus("Resistance cannot be negative.", "error");
+      resetResultsDisplay();
+      return;
+    }
+    if(known.power !== null && known.power < 0){
+      setFieldError("power");
+      showStatus("Power cannot be negative.", "error");
+      resetResultsDisplay();
+      return;
+    }
+
+    var solution = solveOhmsLaw(known);
+
+    if(!solution.ok){
+      if(solution.badField) setFieldError(solution.badField);
+      showStatus(solution.message, "error");
+      resetResultsDisplay();
+      return;
+    }
+
+    // Success — update all four result cards.
+    markResult("voltage", solution.values.voltage, solution.given.voltage);
+    markResult("current", solution.values.current, solution.given.current);
+    markResult("resistance", solution.values.resistance, solution.given.resistance);
+    markResult("power", solution.values.power, solution.given.power);
+
+    lastResults = solution.values;
+
+    showStatus("Calculation complete. All four quantities have been solved.", "success");
+    persistValues();
+  }
+
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    runCalculation();
+  });
+
+  /* ============================================================
+     RESET
+  ============================================================ */
+  resetBtn.addEventListener("click", function(){
+    form.reset();
+    clearAllFieldErrors();
+    hideStatus();
+    resetResultsDisplay();
+    try { localStorage.removeItem(STORAGE_KEY); } catch(e){ /* ignore */ }
+    fields.voltage.input.focus();
+  });
+
+  /* ============================================================
+     COPY RESULTS
+  ============================================================ */
+  copyBtn.addEventListener("click", function(){
+    if(!lastResults){
+      showStatus("Run a calculation first before copying results.", "error");
+      return;
+    }
+    var lines = [
+      "Ohm's Law Calculator Results",
+      "-----------------------------",
+      "Voltage:    " + formatNumber(lastResults.voltage) + " V",
+      "Current:    " + formatNumber(lastResults.current) + " A",
+      "Resistance: " + formatNumber(lastResults.resistance) + " Ω",
+      "Power:      " + formatNumber(lastResults.power) + " W"
+    ];
+    var text = lines.join("\n");
+
+    function fallbackCopy(){
+      var textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      try { document.execCommand("copy"); } catch(e){ /* ignore */ }
+      document.body.removeChild(textarea);
+    }
+
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){
+        showStatus("Results copied to clipboard.", "success");
+      }).catch(function(){
+        fallbackCopy();
+        showStatus("Results copied to clipboard.", "success");
+      });
+    } else {
+      fallbackCopy();
+      showStatus("Results copied to clipboard.", "success");
+    }
+  });
+
+  /* ============================================================
+     PERSISTENCE (last entered values)
+  ============================================================ */
+  function persistValues(){
+    var payload = {};
+    Object.keys(fields).forEach(function(key){
+      payload[key] = {
+        value: fields[key].input.value,
+        unit: fields[key].unit.value
+      };
+    });
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    } catch(e){ /* storage unavailable — fail silently */ }
+  }
+
+  function restoreValues(){
+    var raw = null;
+    try { raw = localStorage.getItem(STORAGE_KEY); } catch(e){ raw = null; }
+    if(!raw) return;
+
+    var payload;
+    try { payload = JSON.parse(raw); } catch(e){ return; }
+    if(!payload || typeof payload !== "object") return;
+
+    Object.keys(fields).forEach(function(key){
+      var entry = payload[key];
+      if(entry && typeof entry.value === "string"){
+        fields[key].input.value = entry.value;
+      }
+      if(entry && typeof entry.unit === "string"){
+        // Only apply if the unit option actually exists for this select.
+        var optionExists = Array.prototype.some.call(fields[key].unit.options, function(opt){
+          return opt.value === entry.unit;
+        });
+        if(optionExists) fields[key].unit.value = entry.unit;
+      }
+    });
+
+    // Auto-run the calculation on load if enough values were restored.
+    var known = collectKnownValues().known;
+    var providedCount = Object.keys(known).filter(function(k){ return known[k] !== null; }).length;
+    if(providedCount >= 2){
+      runCalculation();
+    }
+  }
+
+  // Persist on every input change so values survive an accidental refresh
+  // even before the user clicks Calculate.
+  Object.keys(fields).forEach(function(key){
+    fields[key].input.addEventListener("input", function(){
+      clearFieldError(key);
+    });
+    fields[key].input.addEventListener("change", persistValues);
+    fields[key].unit.addEventListener("change", persistValues);
+  });
+
+  restoreValues();
+
+})();
+</script>
+</body>
+</html>
