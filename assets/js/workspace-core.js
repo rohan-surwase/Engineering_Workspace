@@ -20,7 +20,7 @@ window.EW = window.EW || {};
   // ---- One-time setup: set these two lines for your own repo ----------
   const config = {
     githubUser: "rohan-surwase",
-    githubRepo: "engineering-workspace",
+    githubRepo: "Engineering-Workspace",
     calculatorsPath: "calculators",
     cacheKey: "ew-catalog-cache-v1",
     cacheMinutes: 15,
