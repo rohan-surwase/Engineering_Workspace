@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Engineer's Workspace — Engineering Calculator Hub</title>
+<meta name="description" content="A growing collection of free, offline-capable engineering calculators — scientific, electrical, mechanical, and more. No sign-up, no backend, works entirely in your browser." />
+<meta name="theme-color" content="#0a0e14" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2218%22 fill=%22%230a0e14%22/><text x=%2250%22 y=%2266%22 font-size=%2258%22 text-anchor=%22middle%22 fill=%22%23ff7a1a%22 font-family=%22monospace%22>E</text></svg>" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;650;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+
+<a class="visually-hidden" href="#main">Skip to content</a>
+
+<header class="site-nav">
+  <div class="inner container">
+    <div class="brand">
+      <span class="mark" aria-hidden="true">E</span>
+      <strong>Engineer's Workspace</strong>
+      <span class="doc-no mono">NO. EW&#8209;001</span>
+    </div>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#featured-section">Featured</a>
+      <a href="#browse">Browse</a>
+      <a href="https://github.com/rohan-surwase" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+    <div class="nav-right">
+      <div class="theme-toggle" role="group" aria-label="Theme">
+        <button id="theme-dark-btn" type="button" aria-pressed="true" aria-label="Dark theme">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button id="theme-light-btn" type="button" aria-pressed="false" aria-label="Light theme">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <div class="container">
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <p class="eyebrow">Engineering Calculator Hub</p>
+          <h1>Precision tools for people who <em>build things.</em></h1>
+          <p class="lead">
+            A single, self-contained calculator for every job — no installs, no accounts,
+            no server. Every tool here runs entirely in your browser and works fully offline
+            once loaded.
+          </p>
+
+          <div class="search-wrap">
+            <div class="search-bar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+              <label for="search-input" class="visually-hidden">Search calculators</label>
+              <input id="search-input" type="search" placeholder="Search calculators — try “ohm”, “voltage”, “scientific”…" autocomplete="off" />
+              <span class="kbd-hint mono">/</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="title-block" aria-label="Hub statistics">
+          <div class="tb-header">
+            <span>Title block — Live status</span>
+            <span class="status">Operational</span>
+          </div>
+          <div class="tb-grid">
+            <div class="tb-cell">
+              <div class="value accent" id="stat-total">0</div>
+              <div class="label">Total calculators</div>
+            </div>
+            <div class="tb-cell">
+              <div class="value" id="stat-categories">0</div>
+              <div class="label">Categories</div>
+            </div>
+            <div class="tb-cell">
+              <div class="value" id="stat-featured">0</div>
+              <div class="label">Featured tools</div>
+            </div>
+            <div class="tb-cell">
+              <div class="value mono" style="font-size:16px;">Offline</div>
+              <div class="label">Runtime mode</div>
+            </div>
+          </div>
+          <div class="tb-footer">
+            <span>Rev. 1.0</span>
+            <span>Sheet 1 of 1</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id="browse"></div>
+    <div class="filters" id="filter-chips" role="group" aria-label="Filter by category"></div>
+
+    <section id="featured-section">
+      <div class="section-head">
+        <h2>Featured</h2>
+      </div>
+      <div class="calc-grid featured" id="featured-grid"></div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>All calculators</h2>
+        <span class="count mono" id="all-count"></span>
+      </div>
+      <div class="calc-grid" id="all-grid"></div>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span>&copy; <span id="footer-year"></span> Engineer's Workspace — built with plain HTML, CSS &amp; JS.</span>
+    <span class="footer-links">
+      <a href="https://github.com/rohan-surwase" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://linkedin.com/in/rohan-surwase" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="#main">Back to top</a>
+    </span>
+  </div>
+</footer>
+
+<script src="assets/js/calculators-data.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
