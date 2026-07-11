@@ -1,0 +1,1095 @@
+<!-- CALCULATOR_INFO
+title: Voltage Drop Calculator
+description: Calculate voltage drop, percentage voltage drop, and recommended cable size for single-phase and three-phase electrical systems.
+category: Electrical
+icon: ⚡
+featured: true
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Voltage Drop Calculator — Engineer's Workspace</title>
+<style>
+  :root{
+    --grid-line-light: rgba(15,52,96,0.08);
+    --grid-line-dark: rgba(120,170,255,0.07);
+
+    /* Light theme — blueprint paper */
+    --bg-light: #eef2f6;
+    --paper-light: #ffffff;
+    --paper-alt-light: #f4f7fa;
+    --ink-light: #10233d;
+    --ink-soft-light: #4c637e;
+    --line-light: #d3dee8;
+    --accent-light: #b5651d;
+    --accent-2-light: #0f5f8c;
+    --ok-light: #1f7a4d;
+    --bad-light: #b3261e;
+    --shadow-light: 0 8px 24px rgba(16,35,61,0.08);
+
+    /* Dark theme — drafting table blueprint */
+    --bg-dark: #0a1626;
+    --paper-dark: #0f2038;
+    --paper-alt-dark: #132741;
+    --ink-dark: #dce8f7;
+    --ink-soft-dark: #8ba3c2;
+    --line-dark: #1e3a5c;
+    --accent-dark: #e0a458;
+    --accent-2-dark: #5fb2e8;
+    --ok-dark: #4fd18b;
+    --bad-dark: #ff6b6b;
+    --shadow-dark: 0 8px 28px rgba(0,0,0,0.45);
+
+    --radius: 14px;
+    --radius-sm: 8px;
+    --font-sans: 'IBM Plex Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, 'Courier New', monospace;
+  }
+
+  [data-theme="light"]{
+    --bg: var(--bg-light);
+    --paper: var(--paper-light);
+    --paper-alt: var(--paper-alt-light);
+    --ink: var(--ink-light);
+    --ink-soft: var(--ink-soft-light);
+    --line: var(--line-light);
+    --accent: var(--accent-light);
+    --accent-2: var(--accent-2-light);
+    --ok: var(--ok-light);
+    --bad: var(--bad-light);
+    --shadow: var(--shadow-light);
+    --grid-line: var(--grid-line-light);
+  }
+
+  [data-theme="dark"]{
+    --bg: var(--bg-dark);
+    --paper: var(--paper-dark);
+    --paper-alt: var(--paper-alt-dark);
+    --ink: var(--ink-dark);
+    --ink-soft: var(--ink-soft-dark);
+    --line: var(--line-dark);
+    --accent: var(--accent-dark);
+    --accent-2: var(--accent-2-dark);
+    --ok: var(--ok-dark);
+    --bad: var(--bad-dark);
+    --shadow: var(--shadow-dark);
+    --grid-line: var(--grid-line-dark);
+  }
+
+  *{ box-sizing: border-box; }
+
+  html{ scroll-behavior: smooth; }
+
+  body{
+    margin:0;
+    font-family: var(--font-sans);
+    color: var(--ink);
+    background:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px),
+      var(--bg);
+    background-size: 28px 28px, 28px 28px, auto;
+    transition: background-color .25s ease, color .25s ease;
+    min-height: 100vh;
+  }
+
+  a{ color: inherit; }
+
+  /* ---------- Header ---------- */
+  header.topbar{
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 20px;
+    background: color-mix(in srgb, var(--paper) 88%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .btn{
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line);
+    background: var(--paper-alt);
+    color: var(--ink);
+    padding: 9px 14px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform .12s ease, background-color .15s ease, border-color .15s ease;
+  }
+  .btn:hover{ background: var(--line); }
+  .btn:active{ transform: translateY(1px); }
+  .btn:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible, button:focus-visible{
+    outline: 2px solid var(--accent-2);
+    outline-offset: 2px;
+  }
+
+  .btn-accent{
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #1a1204;
+  }
+  .btn-accent:hover{ filter: brightness(1.08); }
+
+  .home-link{
+    display:inline-flex; align-items:center; gap:8px;
+    text-decoration:none;
+    font-weight:600; font-size:14px;
+    color: var(--ink-soft);
+    padding: 9px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+  }
+  .home-link:hover{ border-color: var(--line); color: var(--ink); }
+
+  .brand{
+    display:flex; align-items:center; gap:10px;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+  .brand .dot{ width:6px; height:6px; border-radius:50%; background: var(--ok); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ok) 25%, transparent); }
+
+  .theme-toggle{
+    width: 40px; height: 40px;
+    padding: 0;
+    justify-content: center;
+    font-size: 18px;
+    border-radius: 50%;
+  }
+
+  /* ---------- Layout ---------- */
+  main{
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 28px 20px 80px;
+  }
+
+  .hero{
+    display:flex; flex-direction: column; gap: 6px;
+    margin-bottom: 26px;
+    border-bottom: 1px dashed var(--line);
+    padding-bottom: 20px;
+  }
+  .eyebrow{
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent-2);
+  }
+  h1{
+    margin: 2px 0 4px;
+    font-size: clamp(24px, 4vw, 34px);
+    font-weight: 700;
+    display:flex; align-items:center; gap:12px;
+  }
+  .hero p{
+    margin:0; color: var(--ink-soft); font-size: 14.5px; max-width: 62ch;
+  }
+
+  .layout{
+    display: grid;
+    grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+    gap: 22px;
+    align-items: start;
+  }
+  @media (max-width: 880px){
+    .layout{ grid-template-columns: 1fr; }
+  }
+
+  .panel{
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 22px;
+  }
+
+  .panel h2{
+    margin: 0 0 16px;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    display:flex; align-items:center; gap:8px;
+  }
+  .panel h2::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background: var(--line);
+  }
+
+  /* ---------- Form ---------- */
+  .field{ margin-bottom: 16px; }
+  .field label{
+    display:block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+  .field .hint{
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+    font-family: var(--font-mono);
+  }
+
+  input[type="number"], select{
+    width: 100%;
+    font-family: var(--font-mono);
+    font-size: 14.5px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line);
+    background: var(--paper-alt);
+    color: var(--ink);
+  }
+  input[type="range"]{
+    width: 100%;
+    accent-color: var(--accent);
+  }
+
+  .field.error input, .field.error select{
+    border-color: var(--bad);
+  }
+  .field .error-msg{
+    display:none;
+    color: var(--bad);
+    font-size: 12px;
+    margin-top: 5px;
+    font-weight: 600;
+  }
+  .field.error .error-msg{ display:block; }
+
+  .row2{ display:grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 420px){ .row2{ grid-template-columns: 1fr; } }
+
+  .segmented{
+    display:grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    overflow:hidden;
+  }
+  .segmented button{
+    font-family: var(--font-sans);
+    font-size: 13.5px;
+    font-weight: 600;
+    padding: 10px 8px;
+    border: none;
+    background: var(--paper-alt);
+    color: var(--ink-soft);
+    cursor:pointer;
+    border-right: 1px solid var(--line);
+    transition: background-color .15s ease, color .15s ease;
+  }
+  .segmented button:last-child{ border-right:none; }
+  .segmented button[aria-pressed="true"]{
+    background: var(--accent);
+    color: #1a1204;
+  }
+
+  .pf-value{ font-family: var(--font-mono); color: var(--accent-2); font-weight:700; }
+
+  .actions{
+    display:flex; flex-wrap: wrap; gap: 10px; margin-top: 4px;
+  }
+
+  /* ---------- Results ---------- */
+  .status-banner{
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    font-weight: 700;
+    font-size: 14px;
+    display:flex; align-items:center; gap:10px;
+    margin-bottom: 18px;
+    border: 1px solid transparent;
+    transition: background-color .2s ease, border-color .2s ease, color .2s ease;
+  }
+  .status-banner.pass{
+    background: color-mix(in srgb, var(--ok) 14%, transparent);
+    border-color: color-mix(in srgb, var(--ok) 40%, transparent);
+    color: var(--ok);
+  }
+  .status-banner.fail{
+    background: color-mix(in srgb, var(--bad) 14%, transparent);
+    border-color: color-mix(in srgb, var(--bad) 40%, transparent);
+    color: var(--bad);
+  }
+  .status-banner.idle{
+    background: var(--paper-alt);
+    border-color: var(--line);
+    color: var(--ink-soft);
+  }
+
+  .gauge-wrap{
+    display:flex; align-items:center; gap: 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .gauge-wrap svg{ flex-shrink:0; }
+  .gauge-num{
+    font-family: var(--font-mono);
+    font-size: 30px;
+    font-weight: 700;
+    fill: var(--ink);
+  }
+  .gauge-label{
+    font-family: var(--font-mono);
+    font-size: 11px;
+    fill: var(--ink-soft);
+  }
+
+  .progress-track{
+    height: 10px;
+    border-radius: 999px;
+    background: var(--paper-alt);
+    border: 1px solid var(--line);
+    overflow:hidden;
+    margin: 4px 0 2px;
+  }
+  .progress-fill{
+    height:100%;
+    width: 0%;
+    background: var(--ok);
+    transition: width .35s ease, background-color .35s ease;
+  }
+  .limit-caption{
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    display:flex; justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .result-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  @media (max-width: 480px){ .result-grid{ grid-template-columns: 1fr; } }
+
+  .result-card{
+    background: var(--paper-alt);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: 13px 14px;
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .result-card.updated{
+    animation: pop .35s ease;
+  }
+  @keyframes pop{
+    0%{ transform: scale(1); }
+    35%{ transform: scale(1.03); box-shadow: 0 4px 14px rgba(0,0,0,0.12); }
+    100%{ transform: scale(1); }
+  }
+  .result-card .rc-label{
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+  .result-card .rc-value{
+    font-family: var(--font-mono);
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .result-card .rc-value.accent{ color: var(--accent-2); }
+
+  .recommendation{
+    margin-top: 18px;
+    padding: 14px 16px;
+    border-radius: var(--radius-sm);
+    border: 1px dashed var(--line);
+    background: var(--paper-alt);
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+  .recommendation strong{ font-family: var(--font-mono); }
+
+  /* ---------- Footer ---------- */
+  footer{
+    max-width: 1180px;
+    margin: 40px auto 0;
+    padding: 20px 20px 40px;
+    border-top: 1px solid var(--line);
+    color: var(--ink-soft);
+    font-size: 12.5px;
+    display:flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+  }
+  footer .disclaimer{ max-width: 60ch; }
+
+  .visually-hidden{
+    position:absolute; width:1px; height:1px; overflow:hidden;
+    clip: rect(0 0 0 0); white-space:nowrap;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation: none !important; transition: none !important; }
+  }
+
+  @media print{
+    header.topbar, .actions, .btn, footer, form#vd-form{ display:none !important; }
+    body{ background: #fff; }
+    .panel{ box-shadow:none; border: 1px solid #999; }
+    main{ padding: 0; }
+  }
+</style>
+</head>
+<body data-theme="dark">
+
+<header class="topbar">
+  <a class="home-link" href="../index.html">
+    <span aria-hidden="true">←</span> Back to Workspace
+  </a>
+  <div class="brand"><span class="dot" aria-hidden="true"></span> Engineer's Workspace</div>
+  <button class="btn theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark and light theme">
+    <span id="themeIcon" aria-hidden="true">☾</span>
+  </button>
+</header>
+
+<main>
+  <div class="hero">
+    <span class="eyebrow">Electrical · Cable Sizing</span>
+    <h1><span aria-hidden="true">⚡</span> Voltage Drop Calculator</h1>
+    <p>Calculate voltage drop, percentage drop, load voltage, power loss and cable resistance for single-phase and three-phase LV circuits. Values update live as you type.</p>
+  </div>
+
+  <div class="layout">
+
+    <!-- ============ FORM PANEL ============ -->
+    <section class="panel" aria-labelledby="form-heading">
+      <h2 id="form-heading">Circuit Parameters</h2>
+      <form id="vd-form" novalidate>
+
+        <div class="field">
+          <label id="systemTypeLabel">System Type</label>
+          <div class="segmented" role="group" aria-labelledby="systemTypeLabel">
+            <button type="button" id="sysSingle" aria-pressed="true" data-value="single">Single Phase</button>
+            <button type="button" id="sysThree" aria-pressed="false" data-value="three">Three Phase</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label id="materialLabel">Conductor Material</label>
+          <div class="segmented" role="group" aria-labelledby="materialLabel">
+            <button type="button" id="matCopper" aria-pressed="true" data-value="copper">Copper</button>
+            <button type="button" id="matAluminium" aria-pressed="false" data-value="aluminium">Aluminium</button>
+          </div>
+        </div>
+
+        <div class="row2">
+          <div class="field">
+            <label for="cableSize">Cable Size (mm²)</label>
+            <select id="cableSize" name="cableSize"></select>
+          </div>
+          <div class="field">
+            <label for="installMethod">Installation Method</label>
+            <select id="installMethod" name="installMethod">
+              <option value="air">Air (clipped/tray)</option>
+              <option value="conduit">Conduit</option>
+              <option value="underground">Underground (direct buried)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row2">
+          <div class="field" id="lengthField">
+            <label for="length">Cable Length (m)</label>
+            <input type="number" id="length" name="length" min="0.1" step="0.1" value="50" inputmode="decimal" aria-describedby="lengthHint">
+            <div class="hint" id="lengthHint">One-way route length</div>
+            <div class="error-msg" role="alert">Enter a length greater than 0.</div>
+          </div>
+          <div class="field" id="currentField">
+            <label for="loadCurrent">Load Current (A)</label>
+            <input type="number" id="loadCurrent" name="loadCurrent" min="0.1" step="0.1" value="32" inputmode="decimal" aria-describedby="currentHint">
+            <div class="hint" id="currentHint">Design / full load current</div>
+            <div class="error-msg" role="alert">Enter a current greater than 0.</div>
+          </div>
+        </div>
+
+        <div class="row2">
+          <div class="field">
+            <label for="supplyVoltage">Supply Voltage</label>
+            <select id="supplyVoltage" name="supplyVoltage">
+              <option value="230">230 V</option>
+              <option value="400" selected>400 V</option>
+              <option value="415">415 V</option>
+              <option value="440">440 V</option>
+              <option value="480">480 V</option>
+            </select>
+          </div>
+          <div class="field" id="tempField">
+            <label for="temperature">Conductor Temperature (°C)</label>
+            <input type="number" id="temperature" name="temperature" min="-10" max="120" step="1" value="30" inputmode="decimal" aria-describedby="tempHint">
+            <div class="hint" id="tempHint">Operating temperature</div>
+            <div class="error-msg" role="alert">Enter a value between -10°C and 120°C.</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="powerFactor">Power Factor (<span class="pf-value" id="pfValue">0.90</span>)</label>
+          <input type="range" id="powerFactor" name="powerFactor" min="0.1" max="1" step="0.01" value="0.9" aria-describedby="pfHint">
+          <div class="hint" id="pfHint">Lagging power factor of the load, 0.1 – 1.0</div>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn" id="resetBtn">↺ Reset</button>
+          <button type="button" class="btn" id="copyBtn">⧉ Copy Results</button>
+          <button type="button" class="btn" id="printBtn">🖨 Print / PDF</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ============ RESULTS PANEL ============ -->
+    <section class="panel" aria-labelledby="results-heading">
+      <h2 id="results-heading">Results</h2>
+
+      <div class="status-banner idle" id="statusBanner" role="status" aria-live="polite">
+        <span aria-hidden="true">ℹ</span>
+        <span id="statusText">Enter circuit parameters to calculate voltage drop.</span>
+      </div>
+
+      <div class="gauge-wrap">
+        <svg width="130" height="130" viewBox="0 0 130 130" role="img" aria-labelledby="gaugeTitle">
+          <title id="gaugeTitle">Voltage drop percentage gauge</title>
+          <circle cx="65" cy="65" r="54" fill="none" stroke="var(--line)" stroke-width="12"></circle>
+          <circle id="gaugeArc" cx="65" cy="65" r="54" fill="none" stroke="var(--ok)" stroke-width="12"
+                  stroke-linecap="round" stroke-dasharray="339.3" stroke-dashoffset="339.3"
+                  transform="rotate(-90 65 65)" style="transition: stroke-dashoffset .4s ease, stroke .3s ease;"></circle>
+          <text x="65" y="60" text-anchor="middle" class="gauge-num" id="gaugePercentText">0.0%</text>
+          <text x="65" y="78" text-anchor="middle" class="gauge-label">VOLTAGE DROP</text>
+        </svg>
+        <div style="flex:1; min-width:180px;">
+          <div class="limit-caption">
+            <span>0%</span>
+            <span>Recommended limit: <strong id="limitCaption">5%</strong></span>
+          </div>
+          <div class="progress-track" role="progressbar" id="progressBar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Voltage drop relative to limit">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-grid" id="resultGrid" aria-live="polite">
+        <div class="result-card"><div class="rc-label">Voltage Drop</div><div class="rc-value" id="rVdrop">— V</div></div>
+        <div class="result-card"><div class="rc-label">Voltage Drop %</div><div class="rc-value" id="rVdropPct">— %</div></div>
+        <div class="result-card"><div class="rc-label">Load Voltage</div><div class="rc-value accent" id="rVload">— V</div></div>
+        <div class="result-card"><div class="rc-label">Power Loss</div><div class="rc-value" id="rPloss">— W</div></div>
+        <div class="result-card"><div class="rc-label">Cable Resistance</div><div class="rc-value" id="rResistance">— Ω/km</div></div>
+        <div class="result-card"><div class="rc-label">Cable Reactance</div><div class="rc-value" id="rReactance">— Ω/km</div></div>
+        <div class="result-card"><div class="rc-label">Estimated Efficiency</div><div class="rc-value accent" id="rEfficiency">— %</div></div>
+        <div class="result-card"><div class="rc-label">Load Power (approx.)</div><div class="rc-value" id="rPload">— W</div></div>
+      </div>
+
+      <div class="recommendation" id="recommendation">
+        <strong>Recommendation:</strong> <span id="recommendationText">Fill in the form to see engineering recommendations.</span>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <span>Engineer's Workspace · Voltage Drop Calculator</span>
+  <span class="disclaimer">Calculations use standard IEC-style approximations for reference only. Verify against local wiring regulations (e.g. IS 732 / IEC 60364) before final design.</span>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* =========================================================
+     CONSTANTS
+     ========================================================= */
+  var CABLE_SIZES = [1,1.5,2.5,4,6,10,16,25,35,50,70,95,120,150,185,240,300,400,500,630];
+
+  // Resistivity at 20°C, ohm·mm²/m
+  var RESISTIVITY_20C = { copper: 0.017241, aluminium: 0.0282 };
+  // Temperature coefficient of resistance per °C
+  var TEMP_COEFF = { copper: 0.00393, aluminium: 0.00403 };
+  // Typical cable reactance, ohm/km, by installation method (LV multicore, approx.)
+  var REACTANCE_PER_KM = { air: 0.09, conduit: 0.08, underground: 0.07 };
+  // Recommended maximum voltage drop, percent of supply voltage
+  var VDROP_LIMIT_PCT = 5;
+  // Upper bound used to scale the gauge visually
+  var GAUGE_MAX_PCT = 10;
+
+  var STORAGE_INPUTS_KEY = "ew-voltage-drop-inputs";
+  var STORAGE_THEME_KEY = "ew-theme";
+
+  /* =========================================================
+     DOM REFERENCES
+     ========================================================= */
+  var els = {
+    sysSingle: document.getElementById("sysSingle"),
+    sysThree: document.getElementById("sysThree"),
+    matCopper: document.getElementById("matCopper"),
+    matAluminium: document.getElementById("matAluminium"),
+    cableSize: document.getElementById("cableSize"),
+    installMethod: document.getElementById("installMethod"),
+    length: document.getElementById("length"),
+    loadCurrent: document.getElementById("loadCurrent"),
+    supplyVoltage: document.getElementById("supplyVoltage"),
+    temperature: document.getElementById("temperature"),
+    powerFactor: document.getElementById("powerFactor"),
+    pfValue: document.getElementById("pfValue"),
+
+    lengthField: document.getElementById("lengthField"),
+    currentField: document.getElementById("currentField"),
+    tempField: document.getElementById("tempField"),
+
+    statusBanner: document.getElementById("statusBanner"),
+    statusText: document.getElementById("statusText"),
+
+    gaugeArc: document.getElementById("gaugeArc"),
+    gaugePercentText: document.getElementById("gaugePercentText"),
+    progressFill: document.getElementById("progressFill"),
+    progressBar: document.getElementById("progressBar"),
+    limitCaption: document.getElementById("limitCaption"),
+
+    rVdrop: document.getElementById("rVdrop"),
+    rVdropPct: document.getElementById("rVdropPct"),
+    rVload: document.getElementById("rVload"),
+    rPloss: document.getElementById("rPloss"),
+    rResistance: document.getElementById("rResistance"),
+    rReactance: document.getElementById("rReactance"),
+    rEfficiency: document.getElementById("rEfficiency"),
+    rPload: document.getElementById("rPload"),
+    resultGrid: document.getElementById("resultGrid"),
+
+    recommendationText: document.getElementById("recommendationText"),
+
+    resetBtn: document.getElementById("resetBtn"),
+    copyBtn: document.getElementById("copyBtn"),
+    printBtn: document.getElementById("printBtn"),
+
+    themeToggle: document.getElementById("themeToggle"),
+    themeIcon: document.getElementById("themeIcon")
+  };
+
+  var state = {
+    system: "single",     // 'single' | 'three'
+    material: "copper"    // 'copper' | 'aluminium'
+  };
+
+  /* =========================================================
+     SETUP: populate cable size dropdown
+     ========================================================= */
+  function populateCableSizes(){
+    els.cableSize.innerHTML = "";
+    CABLE_SIZES.forEach(function(size){
+      var opt = document.createElement("option");
+      opt.value = String(size);
+      opt.textContent = size + " mm²";
+      if(size === 6){ opt.selected = true; }
+      els.cableSize.appendChild(opt);
+    });
+  }
+
+  /* =========================================================
+     ENGINEERING CALCULATIONS
+     ========================================================= */
+
+  // Resistance in ohm/km, temperature-corrected
+  function getResistancePerKm(material, sizeMm2, tempC){
+    var rho20 = RESISTIVITY_20C[material];      // ohm.mm^2/m
+    var alpha = TEMP_COEFF[material];            // per degC
+    var r20PerKm = (rho20 * 1000) / sizeMm2;      // ohm/km at 20C
+    var rT = r20PerKm * (1 + alpha * (tempC - 20));
+    return rT;
+  }
+
+  function getReactancePerKm(installMethod){
+    return REACTANCE_PER_KM[installMethod] !== undefined ? REACTANCE_PER_KM[installMethod] : 0.08;
+  }
+
+  // Core calculation given a full parameter set. Returns a results object.
+  function computeForSize(params){
+    var R = getResistancePerKm(params.material, params.sizeMm2, params.tempC); // ohm/km
+    var X = getReactancePerKm(params.installMethod);                          // ohm/km
+    var cosPhi = params.powerFactor;
+    var sinPhi = Math.sqrt(Math.max(0, 1 - cosPhi * cosPhi));
+
+    var vDrop, pLoss, pLoad;
+    if(params.system === "single"){
+      // Two-conductor (go + return) circuit
+      vDrop = (2 * params.current * params.lengthM * (R * cosPhi + X * sinPhi)) / 1000;
+      pLoss = (2 * params.current * params.current * R * params.lengthM) / 1000;
+      pLoad = params.voltage * params.current * cosPhi;
+    } else {
+      // Three-phase, three-conductor circuit
+      vDrop = (Math.sqrt(3) * params.current * params.lengthM * (R * cosPhi + X * sinPhi)) / 1000;
+      pLoss = (3 * params.current * params.current * R * params.lengthM) / 1000;
+      pLoad = Math.sqrt(3) * params.voltage * params.current * cosPhi;
+    }
+
+    var vDropPct = (vDrop / params.voltage) * 100;
+    var vLoad = params.voltage - vDrop;
+    var efficiency = pLoad > 0 ? (pLoad / (pLoad + pLoss)) * 100 : 0;
+
+    return {
+      resistancePerKm: R,
+      reactancePerKm: X,
+      voltageDrop: vDrop,
+      voltageDropPct: vDropPct,
+      loadVoltage: vLoad,
+      powerLoss: pLoss,
+      loadPower: pLoad,
+      efficiency: efficiency
+    };
+  }
+
+  // Finds the smallest cable size (from the given size upward) whose
+  // voltage drop % is within the recommended limit. Returns null if none qualify.
+  function findAdequateSize(params){
+    var startIndex = CABLE_SIZES.indexOf(params.sizeMm2);
+    if(startIndex === -1){ startIndex = 0; }
+    for(var i = startIndex; i < CABLE_SIZES.length; i++){
+      var testParams = Object.create(params);
+      testParams.sizeMm2 = CABLE_SIZES[i];
+      var result = computeForSize(testParams);
+      if(result.voltageDropPct <= VDROP_LIMIT_PCT){
+        return { size: CABLE_SIZES[i], result: result };
+      }
+    }
+    return null;
+  }
+
+  /* =========================================================
+     VALIDATION
+     ========================================================= */
+  function validateInputs(){
+    var valid = true;
+
+    var length = parseFloat(els.length.value);
+    if(isNaN(length) || length <= 0){
+      els.lengthField.classList.add("error");
+      valid = false;
+    } else {
+      els.lengthField.classList.remove("error");
+    }
+
+    var current = parseFloat(els.loadCurrent.value);
+    if(isNaN(current) || current <= 0){
+      els.currentField.classList.add("error");
+      valid = false;
+    } else {
+      els.currentField.classList.remove("error");
+    }
+
+    var temp = parseFloat(els.temperature.value);
+    if(isNaN(temp) || temp < -10 || temp > 120){
+      els.tempField.classList.add("error");
+      valid = false;
+    } else {
+      els.tempField.classList.remove("error");
+    }
+
+    return valid;
+  }
+
+  /* =========================================================
+     FORMATTING HELPERS
+     ========================================================= */
+  function fmt(num, decimals){
+    if(!isFinite(num)) return "—";
+    return num.toFixed(decimals);
+  }
+
+  function flashUpdated(){
+    els.resultGrid.querySelectorAll(".result-card").forEach(function(card){
+      card.classList.remove("updated");
+      // force reflow so the animation can restart
+      void card.offsetWidth;
+      card.classList.add("updated");
+    });
+  }
+
+  /* =========================================================
+     MAIN CALCULATE + RENDER
+     ========================================================= */
+  function calculate(){
+    if(!validateInputs()){
+      els.statusBanner.className = "status-banner fail";
+      els.statusText.textContent = "Please correct the highlighted fields before calculating.";
+      return;
+    }
+
+    var params = {
+      system: state.system,
+      material: state.material,
+      sizeMm2: parseFloat(els.cableSize.value),
+      installMethod: els.installMethod.value,
+      lengthM: parseFloat(els.length.value),
+      current: parseFloat(els.loadCurrent.value),
+      voltage: parseFloat(els.supplyVoltage.value),
+      tempC: parseFloat(els.temperature.value),
+      powerFactor: parseFloat(els.powerFactor.value)
+    };
+
+    var result = computeForSize(params);
+
+    // ---- Render result cards ----
+    els.rVdrop.textContent = fmt(result.voltageDrop, 2) + " V";
+    els.rVdropPct.textContent = fmt(result.voltageDropPct, 2) + " %";
+    els.rVload.textContent = fmt(result.loadVoltage, 2) + " V";
+    els.rPloss.textContent = fmt(result.powerLoss, 1) + " W";
+    els.rResistance.textContent = fmt(result.resistancePerKm, 4) + " Ω/km";
+    els.rReactance.textContent = fmt(result.reactancePerKm, 4) + " Ω/km";
+    els.rEfficiency.textContent = fmt(result.efficiency, 2) + " %";
+    els.rPload.textContent = fmt(result.loadPower, 1) + " W";
+    flashUpdated();
+
+    // ---- Gauge ----
+    var pctForGauge = Math.max(0, Math.min(result.voltageDropPct, GAUGE_MAX_PCT));
+    var circumference = 339.3; // 2 * PI * 54, matches SVG circle radius
+    var offset = circumference * (1 - pctForGauge / GAUGE_MAX_PCT);
+    els.gaugeArc.style.strokeDashoffset = String(offset);
+    els.gaugePercentText.textContent = fmt(result.voltageDropPct, 1) + "%";
+
+    // ---- Progress bar (relative to the limit, capped at 100%) ----
+    var progressPct = Math.max(0, Math.min((result.voltageDropPct / VDROP_LIMIT_PCT) * 100, 100));
+    els.progressFill.style.width = progressPct + "%";
+    els.progressBar.setAttribute("aria-valuenow", fmt(result.voltageDropPct, 1));
+    els.limitCaption.textContent = VDROP_LIMIT_PCT + "%";
+
+    // ---- Pass / fail coloring ----
+    var pass = result.voltageDropPct <= VDROP_LIMIT_PCT;
+    var color = pass ? "var(--ok)" : "var(--bad)";
+    els.gaugeArc.style.stroke = color;
+    els.progressFill.style.backgroundColor = color;
+
+    if(pass){
+      els.statusBanner.className = "status-banner pass";
+      els.statusText.textContent = "Voltage drop acceptable (" + fmt(result.voltageDropPct,2) + "% ≤ " + VDROP_LIMIT_PCT + "%).";
+    } else {
+      els.statusBanner.className = "status-banner fail";
+      els.statusText.textContent = "Voltage drop exceeds recommended limit (" + fmt(result.voltageDropPct,2) + "% > " + VDROP_LIMIT_PCT + "%).";
+    }
+
+    // ---- Recommendation ----
+    if(pass){
+      els.recommendationText.innerHTML =
+        "<strong>✓ Voltage drop acceptable</strong> for " + params.sizeMm2 + " mm² " + params.material +
+        " conductor over " + params.lengthM + " m. No cable size increase required.";
+    } else {
+      var suggestion = findAdequateSize(params);
+      if(suggestion && suggestion.size !== params.sizeMm2){
+        els.recommendationText.innerHTML =
+          "<strong>⚠ Increase cable size</strong> — try <strong>" + suggestion.size + " mm²</strong> " +
+          params.material + ", which brings voltage drop to approximately " +
+          fmt(suggestion.result.voltageDropPct, 2) + "%.";
+      } else if(suggestion && suggestion.size === params.sizeMm2){
+        els.recommendationText.innerHTML =
+          "<strong>✓ Voltage drop acceptable</strong> for the selected cable size.";
+      } else {
+        els.recommendationText.innerHTML =
+          "<strong>⚠ Increase cable size</strong> — even the largest listed size (630 mm²) does not bring voltage drop within " +
+          VDROP_LIMIT_PCT + "%. Consider shortening the run, reducing current, or splitting the load.";
+      }
+    }
+
+    saveInputs(params);
+  }
+
+  /* =========================================================
+     LOCAL STORAGE
+     ========================================================= */
+  function saveInputs(params){
+    try{
+      var data = {
+        system: params.system,
+        material: params.material,
+        sizeMm2: params.sizeMm2,
+        installMethod: params.installMethod,
+        lengthM: params.lengthM,
+        current: params.current,
+        voltage: params.voltage,
+        tempC: params.tempC,
+        powerFactor: params.powerFactor
+      };
+      localStorage.setItem(STORAGE_INPUTS_KEY, JSON.stringify(data));
+    } catch(e){ /* localStorage unavailable — silently skip persistence */ }
+  }
+
+  function loadInputs(){
+    try{
+      var raw = localStorage.getItem(STORAGE_INPUTS_KEY);
+      if(!raw) return;
+      var data = JSON.parse(raw);
+      if(!data) return;
+
+      setSystemType(data.system === "three" ? "three" : "single");
+      setMaterial(data.material === "aluminium" ? "aluminium" : "copper");
+
+      if(data.sizeMm2 && CABLE_SIZES.indexOf(data.sizeMm2) !== -1){
+        els.cableSize.value = String(data.sizeMm2);
+      }
+      if(data.installMethod){ els.installMethod.value = data.installMethod; }
+      if(data.lengthM){ els.length.value = data.lengthM; }
+      if(data.current){ els.loadCurrent.value = data.current; }
+      if(data.voltage){ els.supplyVoltage.value = String(data.voltage); }
+      if(data.tempC !== undefined){ els.temperature.value = data.tempC; }
+      if(data.powerFactor){
+        els.powerFactor.value = data.powerFactor;
+        els.pfValue.textContent = parseFloat(data.powerFactor).toFixed(2);
+      }
+    } catch(e){ /* ignore malformed storage */ }
+  }
+
+  /* =========================================================
+     SEGMENTED CONTROLS
+     ========================================================= */
+  function setSystemType(value){
+    state.system = value;
+    els.sysSingle.setAttribute("aria-pressed", String(value === "single"));
+    els.sysThree.setAttribute("aria-pressed", String(value === "three"));
+  }
+  function setMaterial(value){
+    state.material = value;
+    els.matCopper.setAttribute("aria-pressed", String(value === "copper"));
+    els.matAluminium.setAttribute("aria-pressed", String(value === "aluminium"));
+  }
+
+  els.sysSingle.addEventListener("click", function(){ setSystemType("single"); calculate(); });
+  els.sysThree.addEventListener("click", function(){ setSystemType("three"); calculate(); });
+  els.matCopper.addEventListener("click", function(){ setMaterial("copper"); calculate(); });
+  els.matAluminium.addEventListener("click", function(){ setMaterial("aluminium"); calculate(); });
+
+  /* =========================================================
+     LIVE INPUT LISTENERS
+     ========================================================= */
+  [els.cableSize, els.installMethod, els.length, els.loadCurrent,
+   els.supplyVoltage, els.temperature].forEach(function(el){
+    el.addEventListener("input", calculate);
+    el.addEventListener("change", calculate);
+  });
+
+  els.powerFactor.addEventListener("input", function(){
+    els.pfValue.textContent = parseFloat(els.powerFactor.value).toFixed(2);
+    calculate();
+  });
+
+  /* =========================================================
+     ACTION BUTTONS
+     ========================================================= */
+  els.resetBtn.addEventListener("click", function(){
+    setSystemType("single");
+    setMaterial("copper");
+    els.cableSize.value = "6";
+    els.installMethod.value = "air";
+    els.length.value = "50";
+    els.loadCurrent.value = "32";
+    els.supplyVoltage.value = "400";
+    els.temperature.value = "30";
+    els.powerFactor.value = "0.9";
+    els.pfValue.textContent = "0.90";
+    [els.lengthField, els.currentField, els.tempField].forEach(function(f){ f.classList.remove("error"); });
+    calculate();
+  });
+
+  els.copyBtn.addEventListener("click", function(){
+    var lines = [
+      "Voltage Drop Calculator — Results",
+      "System: " + (state.system === "single" ? "Single Phase" : "Three Phase"),
+      "Conductor: " + state.material + ", " + els.cableSize.value + " mm²",
+      "Installation: " + els.installMethod.value,
+      "Length: " + els.length.value + " m",
+      "Load Current: " + els.loadCurrent.value + " A",
+      "Supply Voltage: " + els.supplyVoltage.value + " V",
+      "Power Factor: " + parseFloat(els.powerFactor.value).toFixed(2),
+      "Temperature: " + els.temperature.value + " °C",
+      "----------------------------------------",
+      "Voltage Drop: " + els.rVdrop.textContent,
+      "Voltage Drop %: " + els.rVdropPct.textContent,
+      "Load Voltage: " + els.rVload.textContent,
+      "Power Loss: " + els.rPloss.textContent,
+      "Resistance: " + els.rResistance.textContent,
+      "Reactance: " + els.rReactance.textContent,
+      "Estimated Efficiency: " + els.rEfficiency.textContent
+    ].join("\n");
+
+    function fallbackCopy(text){
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try{ document.execCommand("copy"); } catch(e){ /* no-op */ }
+      document.body.removeChild(ta);
+    }
+
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(lines).catch(function(){ fallbackCopy(lines); });
+    } else {
+      fallbackCopy(lines);
+    }
+
+    var original = els.copyBtn.innerHTML;
+    els.copyBtn.innerHTML = "✓ Copied";
+    setTimeout(function(){ els.copyBtn.innerHTML = original; }, 1600);
+  });
+
+  els.printBtn.addEventListener("click", function(){
+    window.print();
+  });
+
+  /* =========================================================
+     THEME
+     ========================================================= */
+  function applyTheme(theme){
+    document.body.setAttribute("data-theme", theme);
+    els.themeIcon.textContent = theme === "dark" ? "☾" : "☀";
+    try{ localStorage.setItem(STORAGE_THEME_KEY, theme); } catch(e){ /* ignore */ }
+  }
+
+  els.themeToggle.addEventListener("click", function(){
+    var current = document.body.getAttribute("data-theme");
+    applyTheme(current === "dark" ? "light" : "dark");
+  });
+
+  function initTheme(){
+    var saved = null;
+    try{ saved = localStorage.getItem(STORAGE_THEME_KEY); } catch(e){ /* ignore */ }
+    if(saved === "light" || saved === "dark"){
+      applyTheme(saved);
+    } else {
+      var prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
+      applyTheme(prefersLight ? "light" : "dark");
+    }
+  }
+
+  /* =========================================================
+     INIT
+     ========================================================= */
+  function init(){
+    populateCableSizes();
+    initTheme();
+    loadInputs();
+    calculate();
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
